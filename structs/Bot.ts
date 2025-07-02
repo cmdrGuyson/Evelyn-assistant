@@ -8,7 +8,9 @@ import {
   REST,
   Routes,
   Snowflake,
-  InteractionResponseType
+  InteractionResponseType,
+  Message,
+  ChannelType
 } from "discord.js";
 import { readdirSync } from "fs";
 import { join } from "path";
@@ -17,6 +19,7 @@ import { Command } from "../interfaces/Command";
 import { checkPermissions, PermissionResult } from "../utils/checkPermissions";
 import { config } from "../utils/config";
 import { MissingPermissionsException } from "../utils/MissingPermissionsException";
+import { mastraAgent } from "./MastraAgent";
 
 export class Bot {
   public readonly prefix = "/";
@@ -31,6 +34,12 @@ export class Bot {
     this.client.on("ready", () => {
       console.log(`✅ ${this.client.user!.username} is online`);
 
+      // Set bot presence to online
+      this.client.user!.setPresence({
+        activities: [{ name: "DM me to chat!" }],
+        status: "online"
+      });
+
       this.registerSlashCommands();
     });
 
@@ -38,6 +47,7 @@ export class Bot {
     this.client.on("error", console.error);
 
     this.onInteractionCreate();
+    this.onMessageCreate();
   }
 
   private async registerSlashCommands() {
@@ -106,5 +116,74 @@ export class Bot {
         }
       }
     });
+  }
+
+  private async onMessageCreate() {
+    console.log("Setting up messageCreate event listener...");
+
+    this.client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
+      console.log("📨 Message received:", {
+        content: message.content,
+        author: message.author.username,
+        channelType: message.channel.type,
+        isDM: message.channel.type === ChannelType.DM,
+        isPartial: message.partial
+      });
+
+      // Handle partial messages
+      if (message.partial) {
+        try {
+          await message.fetch();
+          console.log("✅ Partial message fetched");
+        } catch (error) {
+          console.error("❌ Failed to fetch partial message:", error);
+          return;
+        }
+      }
+
+      // Only respond to DM messages
+      if (message.channel.type !== ChannelType.DM) {
+        console.log("❌ Not a DM, ignoring");
+        return;
+      }
+
+      console.log("✅ Processing DM message...");
+
+      // Ignore messages from the bot itself
+      if (message.author.id === this.client.user?.id) {
+        return;
+      }
+
+      // Ignore messages that start with the command prefix
+      if (message.content.startsWith(this.prefix)) {
+        return;
+      }
+
+      try {
+        // Show typing indicator
+        await message.channel.sendTyping();
+
+        // Generate response using Mastra agent
+        const response = await mastraAgent.generate([
+          {
+            role: "user",
+            content: message.content
+          }
+        ]);
+
+        // Send the response using Discord.js reply method
+        await message.reply(response.text);
+      } catch (error) {
+        console.error("Error processing DM:", error);
+
+        try {
+          await message.reply("Sorry, I'm having trouble processing your message right now. Please try again later.");
+        } catch (sendError) {
+          console.error("Failed to send error message:", sendError);
+        }
+      }
+    });
+
+    console.log("✅ MessageCreate event listener set up!");
   }
 }
