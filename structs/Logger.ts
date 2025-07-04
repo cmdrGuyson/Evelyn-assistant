@@ -2,7 +2,7 @@ import chalk from "chalk";
 
 /**
  * @name Music Bot Logger
- * @methods error, log, info, debug
+ * @methods error, log, info, debug, warn
  */
 export class Logger {
   /**
@@ -31,6 +31,15 @@ export class Logger {
    */
   public static info({ type, msg }: { type: string; msg: string }): void {
     console.log(chalk.blueBright(`${chalk.blueBright.bold(`[${type}]`)}      ${msg}`));
+  }
+  /**
+   * @name warn
+   * @description Warning Logger
+   * @param type
+   * @param msg
+   */
+  public static warn({ type, msg }: { type: string; msg: string }): void {
+    console.log(chalk.yellow(`${chalk.yellow.bold(`[${type}]`)}      ${msg}`));
   }
   /**
    * @name debug

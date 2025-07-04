@@ -2,6 +2,7 @@ import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import { Octokit } from "@octokit/rest";
 import { config } from "./config";
+import { Logger } from "../structs/Logger";
 
 // Initialize Octokit client
 const octokit = new Octokit({
@@ -20,6 +21,8 @@ export const listRepositories = createTool({
   }),
   description: "List GitHub repositories for the authenticated user or organization",
   execute: async ({ context }) => {
+    Logger.info({ type: "GITHUB_TOOL", msg: `Starting listRepositories tool with params: ${JSON.stringify(context)}` });
+
     try {
       const response = await octokit.repos.listForAuthenticatedUser({
         type: context.type,
@@ -27,6 +30,11 @@ export const listRepositories = createTool({
         direction: context.direction,
         per_page: context.per_page,
         page: context.page
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `listRepositories completed successfully. Found ${response.data.length} repositories`
       });
 
       return {
@@ -46,6 +54,7 @@ export const listRepositories = createTool({
         total_count: response.data.length
       };
     } catch (error) {
+      Logger.error({ type: "GITHUB_TOOL", err: `listRepositories failed: ${error}` });
       throw new Error(`Failed to list repositories: ${error}`);
     }
   }
@@ -60,10 +69,17 @@ export const getRepository = createTool({
   }),
   description: "Get detailed information about a specific GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({ type: "GITHUB_TOOL", msg: `Starting getRepository tool for ${context.owner}/${context.repo}` });
+
     try {
       const response = await octokit.repos.get({
         owner: context.owner,
         repo: context.repo
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `getRepository completed successfully for ${context.owner}/${context.repo}`
       });
 
       return {
@@ -86,6 +102,7 @@ export const getRepository = createTool({
         topics: response.data.topics
       };
     } catch (error) {
+      Logger.error({ type: "GITHUB_TOOL", err: `getRepository failed for ${context.owner}/${context.repo}: ${error}` });
       throw new Error(`Failed to get repository: ${error}`);
     }
   }
@@ -109,6 +126,11 @@ export const listIssues = createTool({
   }),
   description: "List issues for a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting listIssues tool for ${context.owner}/${context.repo} with state: ${context.state}`
+    });
+
     try {
       const response = await octokit.issues.listForRepo({
         owner: context.owner,
@@ -122,6 +144,11 @@ export const listIssues = createTool({
         direction: context.direction,
         per_page: context.per_page,
         page: context.page
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `listIssues completed successfully for ${context.owner}/${context.repo}. Found ${response.data.length} issues`
       });
 
       return {
@@ -143,6 +170,7 @@ export const listIssues = createTool({
         total_count: response.data.length
       };
     } catch (error) {
+      Logger.error({ type: "GITHUB_TOOL", err: `listIssues failed for ${context.owner}/${context.repo}: ${error}` });
       throw new Error(`Failed to list issues: ${error}`);
     }
   }
@@ -161,6 +189,11 @@ export const createIssue = createTool({
   }),
   description: "Create a new issue in a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting createIssue tool for ${context.owner}/${context.repo} with title: "${context.title}"`
+    });
+
     try {
       const response = await octokit.issues.create({
         owner: context.owner,
@@ -169,6 +202,11 @@ export const createIssue = createTool({
         body: context.body,
         assignees: context.assignees,
         labels: context.labels
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `createIssue completed successfully for ${context.owner}/${context.repo}. Created issue #${response.data.number}`
       });
 
       return {
@@ -184,6 +222,7 @@ export const createIssue = createTool({
         labels: response.data.labels?.map((l) => (typeof l === "string" ? l : (l as any).name))
       };
     } catch (error) {
+      Logger.error({ type: "GITHUB_TOOL", err: `createIssue failed for ${context.owner}/${context.repo}: ${error}` });
       throw new Error(`Failed to create issue: ${error}`);
     }
   }
@@ -204,6 +243,11 @@ export const updateIssue = createTool({
   }),
   description: "Update an existing issue in a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting updateIssue tool for ${context.owner}/${context.repo}#${context.issue_number}`
+    });
+
     try {
       const response = await octokit.issues.update({
         owner: context.owner,
@@ -214,6 +258,11 @@ export const updateIssue = createTool({
         state: context.state,
         assignees: context.assignees,
         labels: context.labels
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `updateIssue completed successfully for ${context.owner}/${context.repo}#${context.issue_number}`
       });
 
       return {
@@ -229,6 +278,10 @@ export const updateIssue = createTool({
         labels: response.data.labels?.map((l) => (typeof l === "string" ? l : (l as any).name))
       };
     } catch (error) {
+      Logger.error({
+        type: "GITHUB_TOOL",
+        err: `updateIssue failed for ${context.owner}/${context.repo}#${context.issue_number}: ${error}`
+      });
       throw new Error(`Failed to update issue: ${error}`);
     }
   }
@@ -250,6 +303,11 @@ export const listPullRequests = createTool({
   }),
   description: "List pull requests for a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting listPullRequests tool for ${context.owner}/${context.repo} with state: ${context.state}`
+    });
+
     try {
       const response = await octokit.pulls.list({
         owner: context.owner,
@@ -261,6 +319,11 @@ export const listPullRequests = createTool({
         direction: context.direction,
         per_page: context.per_page,
         page: context.page
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `listPullRequests completed successfully for ${context.owner}/${context.repo}. Found ${response.data.length} pull requests`
       });
 
       return {
@@ -292,6 +355,10 @@ export const listPullRequests = createTool({
         total_count: response.data.length
       };
     } catch (error) {
+      Logger.error({
+        type: "GITHUB_TOOL",
+        err: `listPullRequests failed for ${context.owner}/${context.repo}: ${error}`
+      });
       throw new Error(`Failed to list pull requests: ${error}`);
     }
   }
@@ -311,6 +378,11 @@ export const createPullRequest = createTool({
   }),
   description: "Create a new pull request in a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting createPullRequest tool for ${context.owner}/${context.repo} from ${context.head} to ${context.base}`
+    });
+
     try {
       const response = await octokit.pulls.create({
         owner: context.owner,
@@ -320,6 +392,11 @@ export const createPullRequest = createTool({
         base: context.base,
         body: context.body,
         draft: context.draft
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `createPullRequest completed successfully for ${context.owner}/${context.repo}. Created PR #${response.data.number}`
       });
 
       return {
@@ -337,6 +414,10 @@ export const createPullRequest = createTool({
         mergeable: (response.data as any).mergeable
       };
     } catch (error) {
+      Logger.error({
+        type: "GITHUB_TOOL",
+        err: `createPullRequest failed for ${context.owner}/${context.repo}: ${error}`
+      });
       throw new Error(`Failed to create pull request: ${error}`);
     }
   }
@@ -355,6 +436,11 @@ export const updatePullRequest = createTool({
   }),
   description: "Update an existing pull request in a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting updatePullRequest tool for ${context.owner}/${context.repo}#${context.pull_number}`
+    });
+
     try {
       const response = await octokit.pulls.update({
         owner: context.owner,
@@ -363,6 +449,11 @@ export const updatePullRequest = createTool({
         title: context.title,
         body: context.body,
         state: context.state
+      });
+
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `updatePullRequest completed successfully for ${context.owner}/${context.repo}#${context.pull_number}`
       });
 
       return {
@@ -380,6 +471,10 @@ export const updatePullRequest = createTool({
         mergeable: response.data.mergeable
       };
     } catch (error) {
+      Logger.error({
+        type: "GITHUB_TOOL",
+        err: `updatePullRequest failed for ${context.owner}/${context.repo}#${context.pull_number}: ${error}`
+      });
       throw new Error(`Failed to update pull request: ${error}`);
     }
   }
@@ -398,6 +493,11 @@ export const mergePullRequest = createTool({
   }),
   description: "Merge a pull request in a GitHub repository",
   execute: async ({ context }) => {
+    Logger.info({
+      type: "GITHUB_TOOL",
+      msg: `Starting mergePullRequest tool for ${context.owner}/${context.repo}#${context.pull_number} using ${context.merge_method} method`
+    });
+
     try {
       const response = await octokit.pulls.merge({
         owner: context.owner,
@@ -408,12 +508,21 @@ export const mergePullRequest = createTool({
         merge_method: context.merge_method
       });
 
+      Logger.log({
+        type: "GITHUB_TOOL",
+        msg: `mergePullRequest completed successfully for ${context.owner}/${context.repo}#${context.pull_number}. Merged: ${response.data.merged}`
+      });
+
       return {
         sha: response.data.sha,
         merged: response.data.merged,
         message: response.data.message
       };
     } catch (error) {
+      Logger.error({
+        type: "GITHUB_TOOL",
+        err: `mergePullRequest failed for ${context.owner}/${context.repo}#${context.pull_number}: ${error}`
+      });
       throw new Error(`Failed to merge pull request: ${error}`);
     }
   }
