@@ -5,6 +5,7 @@ import { Memory } from "@mastra/memory";
 import { LibSQLStore, LibSQLVector } from "@mastra/libsql";
 import { fastembed } from "@mastra/fastembed";
 import { TokenLimiter } from "@mastra/memory/processors";
+import { githubTools } from "../utils/github-tools";
 
 const instructions = `You are Evelyn, a friendly and helpful AI assistant. You're designed to help users with various tasks and questions in a conversational manner.
 
@@ -21,9 +22,16 @@ You can help with:
 - Problem-solving and brainstorming
 - Casual conversation
 - Task assistance
+- GitHub repository management (repositories, issues, pull requests)
 - And much more!
 
-Always respond in a way that feels natural and helpful.`;
+GitHub capabilities:
+- List and view repositories
+- Create, update, and manage issues
+- Create, update, and merge pull requests
+- View repository details and statistics
+
+Always respond in a way that feels natural and helpful. When working with GitHub, be sure to ask for the repository owner and name if not provided.`;
 
 // Set OpenAI API key globally
 process.env.OPENAI_API_KEY = config.OPENAI_API_KEY;
@@ -55,7 +63,10 @@ export const mastraAgent = new Agent({
   name: "Evelyn",
   instructions: instructions,
   model: openai("gpt-4o-mini"),
-  memory
+  memory,
+  tools: {
+    ...githubTools
+  }
 });
 
 export default mastraAgent;

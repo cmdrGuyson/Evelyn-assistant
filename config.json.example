@@ -1,4 +1,6 @@
 {
-  "TOKEN": "",
-  "OPENAI_API_KEY": ""
+  "TOKEN": "your-discord-bot-token",
+  "OPENAI_API_KEY": "your-openai-api-key",
+  "GITHUB_TOKEN": "your-github-personal-access-token",
+  "GITHUB_USERNAME": "your-github-username"
 }
