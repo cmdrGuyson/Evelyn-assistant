@@ -164,12 +164,18 @@ export class Bot {
         await message.channel.sendTyping();
 
         // Generate response using Mastra agent
-        const response = await mastraAgent.generate([
+        const response = await mastraAgent.generate(
+          [
+            {
+              role: "user",
+              content: message.content
+            }
+          ],
           {
-            role: "user",
-            content: message.content
+            resourceId: message.author.id, // Discord user ID
+            threadId: message.channel.id // Discord channel or thread ID
           }
-        ]);
+        );
 
         // Send the response using Discord.js reply method
         await message.reply(response.text);

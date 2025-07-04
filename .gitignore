@@ -66,3 +66,6 @@ typings/
 config.json
 
 scripts/.data/
+local.db
+local.db-shm
+local.db-wal
