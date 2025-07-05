@@ -5,9 +5,11 @@ import { LibSQLStore, LibSQLVector } from "@mastra/libsql";
 import { fastembed } from "@mastra/fastembed";
 import { TokenLimiter } from "@mastra/memory/processors";
 import { githubTools } from "../tools/github-tools";
+import { todoistTools } from "../tools/todoist-tools";
 
 const tools = {
-  ...githubTools
+  ...githubTools,
+  ...todoistTools
 };
 
 const instructions = `You are Evelyn, a friendly and helpful AI assistant. You're designed to help users with various tasks and questions in a conversational manner.

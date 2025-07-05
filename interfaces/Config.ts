@@ -3,4 +3,5 @@ export interface Config {
   OPENAI_API_KEY: string;
   GITHUB_TOKEN?: string;
   GITHUB_USERNAME?: string;
+  TODOIST_TOKEN: string;
 }
