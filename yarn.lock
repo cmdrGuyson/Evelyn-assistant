@@ -1009,6 +1009,14 @@
   dependencies:
     "@libsql/client" "^0.15.9"
 
+"@mastra/loggers@^0.10.3":
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/@mastra/loggers/-/loggers-0.10.3.tgz#cd228afc595c9115cf81a140d878e77c0f2a92ee"
+  integrity sha512-71bAZlOVGbgrMpTYzFw+oOu0ljaDtJSBkAFM9xVTkiHn+K3AIYisJXxCLqMYiWzcIRyIoBQo1cINDXckLbhDAQ==
+  dependencies:
+    pino "^9.7.0"
+    pino-pretty "^13.0.0"
+
 "@mastra/mcp@^0.10.5":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@mastra/mcp/-/mcp-0.10.5.tgz#b9800d6b8055d143d53add4316fcd0928ba27273"

@@ -8,7 +8,6 @@ import {
   REST,
   Routes,
   Snowflake,
-  InteractionResponseType,
   Message,
   ChannelType
 } from "discord.js";
@@ -19,7 +18,7 @@ import { Command } from "../interfaces/Command";
 import { checkPermissions, PermissionResult } from "../utils/checkPermissions";
 import { config } from "../utils/config";
 import { MissingPermissionsException } from "../utils/MissingPermissionsException";
-import { mastraAgent } from "./MastraAgent";
+import { mastraAgent } from "../mastra/agents/assistant";
 import { Logger } from "./Logger";
 
 export class Bot {

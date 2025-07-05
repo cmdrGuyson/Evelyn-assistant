@@ -1,8 +1,8 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 import { Octokit } from "@octokit/rest";
-import { config } from "./config";
-import { Logger } from "../structs/Logger";
+import { config } from "../../utils/config";
+import { Logger } from "../../structs/Logger";
 
 // Initialize Octokit client
 const octokit = new Octokit({

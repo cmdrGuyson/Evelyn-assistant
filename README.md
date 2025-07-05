@@ -158,6 +158,9 @@ export GITHUB_USERNAME="your-github-username"
 # Development with hot reload
 yarn dev
 
+# Start Mastra AI agent development server
+yarn mastra
+
 # Production
 yarn start
 
@@ -182,6 +185,17 @@ Send any message to Evelyn in a DM to start a conversation. The bot will:
 - Access GitHub tools if needed
 - Maintain conversation context
 - Provide helpful responses
+
+### Mastra Development Server
+
+The `yarn mastra` command starts the Mastra AI agent development server, which provides:
+
+- **Agent Development**: Hot-reload development environment for AI agents
+- **Tool Testing**: Interactive testing of GitHub tools and other integrations
+- **Memory Management**: Real-time monitoring of conversation memory and vector storage
+- **Debugging**: Enhanced logging and debugging capabilities for agent interactions
+
+This is useful for developing and testing AI agent functionality independently of the Discord bot.
 
 ### GitHub Tools
 

@@ -69,3 +69,6 @@ scripts/.data/
 local.db
 local.db-shm
 local.db-wal
+
+.mastra
+.cursor
