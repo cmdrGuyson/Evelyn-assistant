@@ -10,7 +10,8 @@ try {
     TOKEN: process.env.TOKEN || "",
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
     GITHUB_TOKEN: process.env.GITHUB_TOKEN || "",
-    GITHUB_USERNAME: process.env.GITHUB_USERNAME || ""
+    GITHUB_USERNAME: process.env.GITHUB_USERNAME || "",
+    TODOIST_TOKEN: process.env.TODOIST_TOKEN || ""
   };
 }
 
